@@ -24,13 +24,25 @@
         user="{{user}}"
       >
       </firebase-auth>
+      <firebase-query
+          id="query"
+          app-name="notes"
+          path="/notes/[[user.uid]]"
+          data="{{notes}}">
+      </firebase-query>
+      <app-indexeddb-mirror
+        session="[[user.uid]]"
+        key="notes"
+        data="{{notes}}"
+        persisted-data="{{persistedNotes}}">
+      </app-indexeddb-mirror>
 
-      <paper-fab
-        icon="add"
-        on-tap="create"
-        disabled="[[!online]]"
-        aria-label="Add note">
-      </paper-fab>
+              <paper-fab
+                icon="add"
+                on-tap="create"
+                disabled="[[!online]]"
+                aria-label="Add note">
+              </paper-fab>
 
       <firebase-document
         id="document"
@@ -39,12 +51,22 @@
         data="{{editableNote}}">
       </firebase-document>
 
-      <na-editor
-        id="editor"
-        note="{{editableNote}}"
-        on-close="commitChange">
-      </na-editor>
+              <na-editor
+                id="editor"
+                note="{{editableNote}}"
+                on-close="commitChange">
+              </na-editor>
 
+              <div class="notes">
+                <template is="dom-repeat" items="[[persistedNotes]]" as="note">
+                  <na-note
+                      id$="[[note.$key]]"
+                      title="[[note.title]]"
+                      body="[[note.body]]"
+                      on-tap="edit">
+                  </na-note>
+                </template>
+              </div>
   </template>
   <script>
     Polymer({
